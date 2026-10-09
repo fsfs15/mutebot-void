@@ -8,12 +8,12 @@ from discord.ext import commands # pyright: ignore[reportMissingImports]
 VOICE_CHANNEL_IDS = (
     1499806053318004936,
 )
-if len(set(VOICE_CHANNEL_IDS)) != 4:
-    raise RuntimeError("The four configured voice channel IDs must be unique.")
+if len(set(VOICE_CHANNEL_IDS)) != 1:
+    raise RuntimeError("The configured voice channel ID must be unique.")
 
-ALLOWED_ROLE_ID = 1438897874287988848
+ALLOWED_ROLE_ID = 1550533183085486110
 ROLE_REQUIRED_MESSAGE = "Lazm tkon Among Manager bach dir mute."
-VOICE_REQUIRED_MESSAGE = "Mute ma y5dmch f had salon. Khassk tkoun f wa7ed men salons vocaux li mkhtarin."
+VOICE_REQUIRED_MESSAGE = "Mute ma y5dmch f had salon. Khassk tkoun f salon vocal li mkhtar."
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -91,7 +91,7 @@ class VoiceMuteView(discord.ui.View):
         channels = get_selected_voice_channels(guild)
         if channels is None:
             await interaction.response.send_message(
-                "One or more configured voice channels were not found in this server.",
+                "The configured voice channel was not found in this server.",
                 ephemeral=True,
             )
             return
@@ -194,7 +194,7 @@ async def mutepanel(ctx):
 async def muteall(ctx):
     channels = get_selected_voice_channels(ctx.guild)
     if channels is None:
-        await ctx.send("One or more configured voice channels were not found in this server.")
+        await ctx.send("The configured voice channel was not found in this server.")
         return
     if not member_is_in_selected_voice_channel(ctx.author, channels):
         await ctx.send(VOICE_REQUIRED_MESSAGE)
@@ -213,7 +213,7 @@ async def muteall(ctx):
 async def unmuteall(ctx):
     channels = get_selected_voice_channels(ctx.guild)
     if channels is None:
-        await ctx.send("One or more configured voice channels were not found in this server.")
+        await ctx.send("The configured voice channel was not found in this server.")
         return
     if not member_is_in_selected_voice_channel(ctx.author, channels):
         await ctx.send(VOICE_REQUIRED_MESSAGE)
@@ -232,7 +232,7 @@ async def unmuteall(ctx):
 async def muteone(ctx, member: discord.Member):
     channels = get_selected_voice_channels(ctx.guild)
     if channels is None:
-        await ctx.send("One or more configured voice channels were not found in this server.")
+        await ctx.send("The configured voice channel was not found in this server.")
         return
     if not member_is_in_selected_voice_channel(ctx.author, channels):
         await ctx.send(VOICE_REQUIRED_MESSAGE)
@@ -254,7 +254,7 @@ async def muteone(ctx, member: discord.Member):
 async def unmuteone(ctx, member: discord.Member):
     channels = get_selected_voice_channels(ctx.guild)
     if channels is None:
-        await ctx.send("One or more configured voice channels were not found in this server.")
+        await ctx.send("The configured voice channel was not found in this server.")
         return
     if not member_is_in_selected_voice_channel(ctx.author, channels):
         await ctx.send(VOICE_REQUIRED_MESSAGE)
