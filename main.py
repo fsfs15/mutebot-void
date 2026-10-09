@@ -9,7 +9,7 @@ VOICE_CHANNEL_IDS = (
     1373282885712351333,
     1373282902036713553,
     1534797504820809801,
-    1535720878778876015,
+    1499806053318004936,
 )
 if len(set(VOICE_CHANNEL_IDS)) != 4:
     raise RuntimeError("The four configured voice channel IDs must be unique.")
