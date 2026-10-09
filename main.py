@@ -43,20 +43,17 @@ def get_selected_voice_channels(
 def member_is_in_selected_voice_channel(
     member: discord.Member,
     channels: tuple[discord.VoiceChannel | discord.StageChannel, ...],
-) -> bool:
-    return member.voice is not None and member.voice.channel in channels
+) -> discord.VoiceChannel | discord.StageChannel | None:
+    if member.voice is None or member.voice.channel not in channels:
+        return None
+    return member.voice.channel
 
 
 async def toggle_voice_mutes(
-    channels: tuple[discord.VoiceChannel | discord.StageChannel, ...],
+    channel: discord.VoiceChannel | discord.StageChannel,
     mute: bool,
 ) -> int:
-    members = [
-        member
-        for channel in channels
-        for member in channel.members
-        if not member.bot
-    ]
+    members = [member for member in channel.members if not member.bot]
     if not members:
         return 0
 
@@ -99,18 +96,18 @@ class VoiceMuteView(discord.ui.View):
             )
             return
 
-        if not member_is_in_selected_voice_channel(interaction.user, channels):
+        channel = member_is_in_selected_voice_channel(interaction.user, channels)
+        if channel is None:
             await interaction.response.send_message(
                 VOICE_REQUIRED_MESSAGE,
                 ephemeral=True,
             )
             return
 
-        count = await toggle_voice_mutes(channels, mute)
+        count = await toggle_voice_mutes(channel, mute)
         action = "Muted" if mute else "Unmuted"
-        channel_list = ", ".join(channel.mention for channel in channels)
         await interaction.response.send_message(
-            f"{action} {count} member(s) in {channel_list}.",
+            f"{action} {count} member(s) in {channel.mention}.",
             ephemeral=True,
             delete_after=10,
         )
@@ -198,16 +195,16 @@ async def muteall(ctx):
     if channels is None:
         await ctx.send("The configured voice channel was not found in this server.")
         return
-    if not member_is_in_selected_voice_channel(ctx.author, channels):
+    channel = member_is_in_selected_voice_channel(ctx.author, channels)
+    if channel is None:
         await ctx.send(VOICE_REQUIRED_MESSAGE)
         return
     if not ctx.guild.me.guild_permissions.mute_members:
         await ctx.send("The bot does not have Mute Members permission in this server.")
         return
 
-    muted = await toggle_voice_mutes(channels, True)
-    channel_list = ", ".join(channel.mention for channel in channels)
-    await ctx.send(f"Muted {muted} member(s) in {channel_list}.")
+    muted = await toggle_voice_mutes(channel, True)
+    await ctx.send(f"Muted {muted} member(s) in {channel.mention}.")
 
 
 @bot.command()
@@ -217,16 +214,16 @@ async def unmuteall(ctx):
     if channels is None:
         await ctx.send("The configured voice channel was not found in this server.")
         return
-    if not member_is_in_selected_voice_channel(ctx.author, channels):
+    channel = member_is_in_selected_voice_channel(ctx.author, channels)
+    if channel is None:
         await ctx.send(VOICE_REQUIRED_MESSAGE)
         return
     if not ctx.guild.me.guild_permissions.mute_members:
         await ctx.send("The bot does not have Mute Members permission in this server.")
         return
 
-    unmuted = await toggle_voice_mutes(channels, False)
-    channel_list = ", ".join(channel.mention for channel in channels)
-    await ctx.send(f"Unmuted {unmuted} member(s) in {channel_list}.")
+    unmuted = await toggle_voice_mutes(channel, False)
+    await ctx.send(f"Unmuted {unmuted} member(s) in {channel.mention}.")
 
 
 @bot.command()
@@ -236,12 +233,12 @@ async def muteone(ctx, member: discord.Member):
     if channels is None:
         await ctx.send("The configured voice channel was not found in this server.")
         return
-    if not member_is_in_selected_voice_channel(ctx.author, channels):
+    channel = member_is_in_selected_voice_channel(ctx.author, channels)
+    if channel is None:
         await ctx.send(VOICE_REQUIRED_MESSAGE)
         return
-    if member.voice is None or member.voice.channel not in channels:
-        channel_list = ", ".join(channel.mention for channel in channels)
-        await ctx.send(f"{member.mention} must be in one of these channels: {channel_list}.")
+    if member.voice is None or member.voice.channel != channel:
+        await ctx.send(f"{member.mention} must be in your voice channel, {channel.mention}.")
         return
     if not ctx.guild.me.guild_permissions.mute_members:
         await ctx.send("The bot does not have Mute Members permission in this server.")
@@ -258,12 +255,12 @@ async def unmuteone(ctx, member: discord.Member):
     if channels is None:
         await ctx.send("The configured voice channel was not found in this server.")
         return
-    if not member_is_in_selected_voice_channel(ctx.author, channels):
+    channel = member_is_in_selected_voice_channel(ctx.author, channels)
+    if channel is None:
         await ctx.send(VOICE_REQUIRED_MESSAGE)
         return
-    if member.voice is None or member.voice.channel not in channels:
-        channel_list = ", ".join(channel.mention for channel in channels)
-        await ctx.send(f"{member.mention} must be in one of these channels: {channel_list}.")
+    if member.voice is None or member.voice.channel != channel:
+        await ctx.send(f"{member.mention} must be in your voice channel, {channel.mention}.")
         return
     if not ctx.guild.me.guild_permissions.mute_members:
         await ctx.send("The bot does not have Mute Members permission in this server.")
