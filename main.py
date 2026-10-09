@@ -6,9 +6,6 @@ from discord.ext import commands # pyright: ignore[reportMissingImports]
 
 
 VOICE_CHANNEL_IDS = (
-    1373282885712351333,
-    1373282902036713553,
-    1534797504820809801,
     1499806053318004936,
 )
 if len(set(VOICE_CHANNEL_IDS)) != 4:
