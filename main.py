@@ -6,14 +6,17 @@ from discord.ext import commands # pyright: ignore[reportMissingImports]
 
 
 VOICE_CHANNEL_IDS = (
-    1499806053318004936,
+    1373282885712351333,
+    1373282902036713553,
+    1534797504820809801,
+    1535720878778876015,
 )
-if len(set(VOICE_CHANNEL_IDS)) != 1:
-    raise RuntimeError("The configured voice channel ID must be unique.")
+if len(set(VOICE_CHANNEL_IDS)) != 4:
+    raise RuntimeError("The four configured voice channel IDs must be unique.")
 
-ALLOWED_ROLE_ID = 1438897874287988848
+ALLOWED_ROLE_ID = 1550533183085486110
 ROLE_REQUIRED_MESSAGE = "Lazm tkon Among Manager bach dir mute."
-VOICE_REQUIRED_MESSAGE = "Mute ma y5dmch f had salon. Khassk tkoun f salon vocal li mkhtar."
+VOICE_REQUIRED_MESSAGE = "Mute ma y5dmch f had salon. Khassk tkoun f wa7ed men salons vocaux li mkhtarin."
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -171,19 +174,18 @@ async def mutepanel(ctx):
         return
 
     embed = discord.Embed(
-        title="Void Among Mute Panel",
-        description="Kifesh tekdem:",
+        title="🎙️ Contrôle Mute",
+        description="**Kifesh tekhdem:**",
         color=0x2F3136,
     )
     embed.add_field(
         name="",
         value=(
-            f"• Mute Kaml: mute everyone in {', '.join(f'<#{channel_id}>' for channel_id in VOICE_CHANNEL_IDS)}.\n"
-            f"• Unmute Kaml: unmute everyone in {', '.join(f'<#{channel_id}>' for channel_id in VOICE_CHANNEL_IDS)}."
+            "• 🔴 `Mute Kaml`: L'bot ydir mute l'ga3 nas f l'salon.\n"
+            "• 🟢 `Unmute Kaml`: L'bot yna7i l'mute 3la ga3 nas f l'salon."
         ),
         inline=False,
     )
-    embed.set_footer(text="(edited)")
 
     message = await ctx.send(embed=embed, view=VoiceMuteView())
     await message.pin()
