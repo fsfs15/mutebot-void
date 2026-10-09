@@ -181,8 +181,8 @@ async def mutepanel(ctx):
     embed.add_field(
         name="",
         value=(
-            "• 🔴 `Mute Kaml`: L'bot ydir mute l'ga3 nas f l'salon.\n"
-            "• 🟢 `Unmute Kaml`: L'bot yna7i l'mute 3la ga3 nas f l'salon."
+            "• 🔴 `Mute Kaml`: L'bot ydir Mute l'ga3 nas li m3ak f l'salon.\n"
+            "• 🟢 `Unmute Kaml`: L'bot yna7i l'Mute 3la ga3 nas li m3ak f l'salon."
         ),
         inline=False,
     )
