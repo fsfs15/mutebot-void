@@ -14,8 +14,8 @@ VOICE_CHANNEL_IDS = (
 if len(set(VOICE_CHANNEL_IDS)) != 4:
     raise RuntimeError("The four configured voice channel IDs must be unique.")
 
-ALLOWED_ROLE_ID = 1438897874287988848
-ROLE_REQUIRED_MESSAGE = "Lazm tkon Among Manager bach dir mute."
+ALLOWED_ROLE_ID = 1550533183085486110
+ROLE_REQUIRED_MESSAGE = "Lazm tkon Among Manager bach dir mute ou unmute."
 VOICE_REQUIRED_MESSAGE = "Mute ma y5dmch f had salon. Khassk tkoun f wa7ed men salons vocaux li mkhtarin."
 
 intents = discord.Intents.default()
