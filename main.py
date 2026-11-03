@@ -1,6 +1,10 @@
 import asyncio
 import os
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 import discord # pyright: ignore[reportMissingImports]
 from discord.ext import commands # pyright: ignore[reportMissingImports]
 
@@ -66,23 +70,22 @@ class VoiceMuteView(discord.ui.View):
         super().__init__(timeout=None)
 
     async def handle_action(self, interaction: discord.Interaction, mute: bool):
+        await interaction.response.defer(ephemeral=True)
+
         guild = interaction.guild
         if guild is None or not isinstance(interaction.user, discord.Member):
-            await interaction.response.send_message(
+            await interaction.followup.send(
                 "This panel can only be used by a server member.",
                 ephemeral=True,
             )
             return
 
         if not has_allowed_role(interaction.user):
-            await interaction.response.send_message(
-                ROLE_REQUIRED_MESSAGE,
-                ephemeral=True,
-            )
+            await interaction.followup.send(ROLE_REQUIRED_MESSAGE, ephemeral=True)
             return
 
         if not guild.me.guild_permissions.mute_members:
-            await interaction.response.send_message(
+            await interaction.followup.send(
                 "The bot does not have Mute Members permission in this server.",
                 ephemeral=True,
             )
@@ -90,7 +93,7 @@ class VoiceMuteView(discord.ui.View):
 
         channels = get_selected_voice_channels(guild)
         if channels is None:
-            await interaction.response.send_message(
+            await interaction.followup.send(
                 "The configured voice channel was not found in this server.",
                 ephemeral=True,
             )
@@ -98,18 +101,14 @@ class VoiceMuteView(discord.ui.View):
 
         channel = member_is_in_selected_voice_channel(interaction.user, channels)
         if channel is None:
-            await interaction.response.send_message(
-                VOICE_REQUIRED_MESSAGE,
-                ephemeral=True,
-            )
+            await interaction.followup.send(VOICE_REQUIRED_MESSAGE, ephemeral=True)
             return
 
         count = await toggle_voice_mutes(channel, mute)
         action = "Muted" if mute else "Unmuted"
-        await interaction.response.send_message(
+        await interaction.followup.send(
             f"{action} {count} member(s) in {channel.mention}.",
             ephemeral=True,
-            delete_after=10,
         )
 
     @discord.ui.button(
